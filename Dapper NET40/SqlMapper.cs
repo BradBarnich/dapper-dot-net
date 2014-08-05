@@ -4619,8 +4619,12 @@ string name, object value = null, DbType? dbType = null, ParameterDirection? dir
         public SqlMapper.IMemberMap GetConstructorParameter(ConstructorInfo constructor, string columnName)
         {
             var parameters = constructor.GetParameters();
+            var parameter = parameters.FirstOrDefault( p => string.Equals( p.Name, columnName, StringComparison.Ordinal ) )
+               ?? parameters.FirstOrDefault( p => string.Equals( p.Name, columnName, StringComparison.OrdinalIgnoreCase ) )
+               ?? parameters.FirstOrDefault( p => string.Equals( p.Name, columnName.Replace( "_", "" ), StringComparison.Ordinal ) )
+               ?? parameters.FirstOrDefault( p => string.Equals( p.Name, columnName.Replace( "_", "" ), StringComparison.OrdinalIgnoreCase ) );
 
-            return new SimpleMemberMap(columnName, parameters.FirstOrDefault(p => string.Equals(p.Name, columnName, StringComparison.OrdinalIgnoreCase)));
+            return new SimpleMemberMap(columnName, parameter);
         }
 
         /// <summary>
